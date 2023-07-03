@@ -1,3 +1,0 @@
-rootProject.name = 'hjtb_coin_stream_daemon'
-include 'hjtb_exception_monitoring_module'
-include 'hjtb_web_client_module'

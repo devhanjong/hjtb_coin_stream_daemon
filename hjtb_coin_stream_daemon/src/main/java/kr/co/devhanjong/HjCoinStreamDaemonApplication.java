@@ -6,10 +6,10 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
 @EnableScheduling
-public class UpCoinStreamDaemonApplication {
+public class HjCoinStreamDaemonApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(UpCoinStreamDaemonApplication.class, args);
+        SpringApplication.run(HjCoinStreamDaemonApplication.class, args);
     }
 
 }

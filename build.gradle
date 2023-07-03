@@ -3,7 +3,7 @@ plugins {
 }
 
 allprojects {
-    group = 'kr.co.upchain'
+    group = 'kr.co.devhanjong'
     version = '1.0'
 
     apply plugin: 'java-library'
@@ -25,7 +25,7 @@ allprojects {
 
 project(':hjtb_coin_stream_daemon') {
     dependencies {
-        implementation project(':hjtb_web_client_module')
-        implementation project(':hjtb_exception_monitoring_module')
+        implementation project(':hj_web_client_module')
+        implementation project(':hj_exception_monitoring_module')
     }
 }
