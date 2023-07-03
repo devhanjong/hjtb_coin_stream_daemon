@@ -25,7 +25,7 @@ allprojects {
 
 project(':hjtb_coin_stream_daemon') {
     dependencies {
-        implementation project(':hj_web_client_module')
+        implementation project(':web_client_module')
         implementation project(':hj_exception_monitoring_module')
     }
 }

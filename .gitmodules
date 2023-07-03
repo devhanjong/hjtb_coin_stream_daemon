@@ -12,3 +12,6 @@
 [submodule "web_client_module"]
 	path = web_client_module
 	url = https://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@github.com/devhanjong/web_client_module.git
+[submodule "monitoring_module"]
+	path = monitoring_module
+	url = https://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@github.com/devhanjong/monitoring_module.git
