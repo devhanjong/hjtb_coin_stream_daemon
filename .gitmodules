@@ -6,3 +6,6 @@
 	path = up_exception_monitoring_module
 	url = https://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@github.com/UPRepo/up_exception_monitoring_module.git
 	branch = master
+[submodule "error_code_module"]
+	path = error_code_module
+	url = https://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@github.com/devhanjong/error_code_module.git
