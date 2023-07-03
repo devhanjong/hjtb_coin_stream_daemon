@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.devhanjong.hjtb_coin_stream_daemon.mapper.ErrorHandlerMapper">
+
+    <update id="increaseErrorCntFromVaspSimpleNameAndMySymbol">
+        UPDATE market_tracking_list
+        SET error_cnt = (
+            SELECT error_cnt
+            FROM (
+                     SELECT error_cnt + 1 AS error_cnt
+                     FROM market_tracking_list
+                     WHERE vasp_simple_name = #{vaspSimpleName} AND my_symbol = #{mySymbol}
+                 ) AS t1
+        )
+        WHERE vasp_simple_name = #{vaspSimpleName} AND my_symbol = #{mySymbol};
+    </update>
+
+    <insert id="insertErrorLog">
+        INSERT INTO handler_error_log(
+            vasp_simple_name,
+            <if test="handlerErrorLogDto.mySymbol != null and handlerErrorLogDto.mySymbol != ''"> my_symbol, </if>
+            <if test="handlerErrorLogDto.memo != null and handlerErrorLogDto.memo != ''"> memo, </if>
+            error_msg,
+            response_msg,
+            reg_date
+        )
+        VALUES (
+            #{handlerErrorLogDto.vaspSimpleName},
+        <if test="handlerErrorLogDto.mySymbol != null and handlerErrorLogDto.mySymbol != ''"> #{handlerErrorLogDto.mySymbol}, </if>
+        <if test="handlerErrorLogDto.memo != null and handlerErrorLogDto.memo != ''"> #{handlerErrorLogDto.memo}, </if>
+            #{handlerErrorLogDto.errorMsg},
+            #{handlerErrorLogDto.responseMsg},
+            NOW()
+        )
+    </insert>
+
+
+
+</mapper>

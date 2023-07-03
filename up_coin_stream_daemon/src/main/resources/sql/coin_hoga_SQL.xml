@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.devhanjong.hjtb_coin_stream_daemon.mapper.CoinHogaMapper">
+
+    <insert id="insertCoinHoga">
+        INSERT INTO hoga.hoga_${coinHogaTempDto.mySymbol} (
+            reg_date,
+            ${coinHogaTempDto.vaspSimpleName}_bid1_price,
+            ${coinHogaTempDto.vaspSimpleName}_bid1_qty,
+            ${coinHogaTempDto.vaspSimpleName}_bid2_price,
+            ${coinHogaTempDto.vaspSimpleName}_bid2_qty,
+            ${coinHogaTempDto.vaspSimpleName}_bid3_price,
+            ${coinHogaTempDto.vaspSimpleName}_bid3_qty,
+            ${coinHogaTempDto.vaspSimpleName}_bid4_price,
+            ${coinHogaTempDto.vaspSimpleName}_bid4_qty,
+            ${coinHogaTempDto.vaspSimpleName}_bid5_price,
+            ${coinHogaTempDto.vaspSimpleName}_bid5_qty,
+            ${coinHogaTempDto.vaspSimpleName}_ask1_price,
+            ${coinHogaTempDto.vaspSimpleName}_ask1_qty,
+            ${coinHogaTempDto.vaspSimpleName}_ask2_price,
+            ${coinHogaTempDto.vaspSimpleName}_ask2_qty,
+            ${coinHogaTempDto.vaspSimpleName}_ask3_price,
+            ${coinHogaTempDto.vaspSimpleName}_ask3_qty,
+            ${coinHogaTempDto.vaspSimpleName}_ask4_price,
+            ${coinHogaTempDto.vaspSimpleName}_ask4_qty,
+            ${coinHogaTempDto.vaspSimpleName}_ask5_price,
+            ${coinHogaTempDto.vaspSimpleName}_ask5_qty
+        )
+        VALUES
+        (
+            #{regDate},
+            #{coinHogaTempDto.bid1Price},
+            #{coinHogaTempDto.bid1Qty},
+            #{coinHogaTempDto.bid2Price},
+            #{coinHogaTempDto.bid2Qty},
+            #{coinHogaTempDto.bid3Price},
+            #{coinHogaTempDto.bid3Qty},
+            #{coinHogaTempDto.bid4Price},
+            #{coinHogaTempDto.bid4Qty},
+            #{coinHogaTempDto.bid5Price},
+            #{coinHogaTempDto.bid5Qty},
+            #{coinHogaTempDto.ask1Price},
+            #{coinHogaTempDto.ask1Qty},
+            #{coinHogaTempDto.ask2Price},
+            #{coinHogaTempDto.ask2Qty},
+            #{coinHogaTempDto.ask3Price},
+            #{coinHogaTempDto.ask3Qty},
+            #{coinHogaTempDto.ask4Price},
+            #{coinHogaTempDto.ask4Qty},
+            #{coinHogaTempDto.ask5Price},
+            #{coinHogaTempDto.ask5Qty}
+        )
+        ON DUPLICATE KEY UPDATE
+            ${coinHogaTempDto.vaspSimpleName}_bid1_price  =  #{coinHogaTempDto.bid1Price},
+            ${coinHogaTempDto.vaspSimpleName}_bid1_qty    =  #{coinHogaTempDto.bid1Qty},
+            ${coinHogaTempDto.vaspSimpleName}_bid2_price  =  #{coinHogaTempDto.bid2Price},
+            ${coinHogaTempDto.vaspSimpleName}_bid2_qty    =  #{coinHogaTempDto.bid2Qty},
+            ${coinHogaTempDto.vaspSimpleName}_bid3_price  =  #{coinHogaTempDto.bid3Price},
+            ${coinHogaTempDto.vaspSimpleName}_bid3_qty    =  #{coinHogaTempDto.bid3Qty},
+            ${coinHogaTempDto.vaspSimpleName}_bid4_price  =  #{coinHogaTempDto.bid4Price},
+            ${coinHogaTempDto.vaspSimpleName}_bid4_qty    =  #{coinHogaTempDto.bid4Qty},
+            ${coinHogaTempDto.vaspSimpleName}_bid5_price  =  #{coinHogaTempDto.bid5Price},
+            ${coinHogaTempDto.vaspSimpleName}_bid5_qty    =  #{coinHogaTempDto.bid5Qty},
+            ${coinHogaTempDto.vaspSimpleName}_ask1_price  =  #{coinHogaTempDto.ask1Price},
+            ${coinHogaTempDto.vaspSimpleName}_ask1_qty    =  #{coinHogaTempDto.ask1Qty},
+            ${coinHogaTempDto.vaspSimpleName}_ask2_price  =  #{coinHogaTempDto.ask2Price},
+            ${coinHogaTempDto.vaspSimpleName}_ask2_qty    =  #{coinHogaTempDto.ask2Qty},
+            ${coinHogaTempDto.vaspSimpleName}_ask3_price  =  #{coinHogaTempDto.ask3Price},
+            ${coinHogaTempDto.vaspSimpleName}_ask3_qty    =  #{coinHogaTempDto.ask3Qty},
+            ${coinHogaTempDto.vaspSimpleName}_ask4_price  =  #{coinHogaTempDto.ask4Price},
+            ${coinHogaTempDto.vaspSimpleName}_ask4_qty    =  #{coinHogaTempDto.ask4Qty},
+            ${coinHogaTempDto.vaspSimpleName}_ask5_price  =  #{coinHogaTempDto.ask5Price},
+            ${coinHogaTempDto.vaspSimpleName}_ask5_qty    =  #{coinHogaTempDto.ask5Qty}
+    </insert>
+
+    <select id="selectVaspList" resultType="kr.co.devhanjong.hjtb_coin_stream_daemon.dto.VaspListDto">
+        SELECT *
+        FROM vasp_list
+        WHERE 1=1
+        <if test="health != null"> AND health = #{health} </if>
+    </select>
+
+    <select id="selectSymbolFromTrackingList" resultType="kr.co.devhanjong.hjtb_coin_stream_daemon.dto.MarketTrackingDto">
+        SELECT *
+        FROM market_tracking_list
+        WHERE my_symbol
+                  IN (
+                  SELECT my_symbol
+                  FROM market_tracking_list
+                  WHERE `status` = 'Y'
+                  GROUP BY my_symbol
+                  HAVING COUNT(my_symbol) >= 2
+              )
+        AND `status` = 'Y'
+        AND error_cnt <![CDATA[<]]> 5;
+    </select>
+
+    <select id="selectVaspEndPoint" resultType="kr.co.devhanjong.hjtb_coin_stream_daemon.dto.VaspApiEndPointDto">
+        SELECT *
+        FROM vasp_api_end_point;
+    </select>
+
+    <insert id="insertReportGap">
+        INSERT INTO report_test.hoga_gap
+        (
+            reg_date,
+            a_vasp_simple_name,
+            b_vasp_simple_name,
+            my_symbol,
+            a_bid_avg_price,
+            b_bid_avg_price,
+            bid_gap,
+            bid_can_amount,
+            a_ask_avg_price,
+            b_ask_avg_price,
+            ask_gap,
+            ask_can_amount
+        )
+        VALUES
+        (
+            NOW(),
+            #{reportGapDto.aVaspSimpleName},
+            #{reportGapDto.bVaspSimpleName},
+            #{reportGapDto.mySymbol},
+            #{reportGapDto.aBidAvgPrice},
+            #{reportGapDto.bBidAvgPrice},
+            #{reportGapDto.bidGap},
+            #{reportGapDto.bidCanAmount},
+            #{reportGapDto.aAskAvgPrice},
+            #{reportGapDto.bAskAvgPrice},
+            #{reportGapDto.askGap},
+            #{reportGapDto.askCanAmount}
+        )
+    </insert>
+
+    <insert id="insertLiveHoga">
+        INSERT INTO report_test.live_hoga
+        (
+            a_vasp_simple_name,
+            b_vasp_simple_name,
+            my_symbol,
+            reg_date,
+            bid_gap,
+            guess_fee,
+            buy_gap,
+            ask_gap,
+            bid_can_amount,
+            ask_can_amount
+        )
+        VALUES
+            (
+                #{reportGapDto.aVaspSimpleName},
+                #{reportGapDto.bVaspSimpleName},
+                #{reportGapDto.mySymbol},
+                NOW(),
+                #{reportGapDto.bidGap},
+                0.29,
+                ${reportGapDto.bidGap} - 0.29,
+                #{reportGapDto.askGap},
+                #{reportGapDto.bidCanAmount},
+                #{reportGapDto.askCanAmount}
+            )
+        ON DUPLICATE KEY UPDATE
+           mod_date                 = NOW(),
+           bid_gap                  = #{reportGapDto.bidGap},
+           guess_fee                = 0.29,
+           buy_gap                  = ${reportGapDto.bidGap} - 0.29,
+           ask_gap                  = #{reportGapDto.askGap},
+           bid_can_amount           = #{reportGapDto.bidCanAmount},
+           ask_can_amount           = #{reportGapDto.askCanAmount}
+    </insert>
+</mapper>

@@ -1,0 +1,31 @@
+plugins {
+    id 'java-library'
+}
+
+allprojects {
+    group = 'kr.co.upchain'
+    version = '1.0'
+
+    apply plugin: 'java-library'
+
+    repositories {
+        mavenCentral()
+        maven { url 'https://jitpack.io' }
+        maven {
+            name = 'GithubPackages'
+            url = "https://maven.pkg.github.com/UPRepo/up_common_library"
+            credentials {
+                username = 'repo@upchain.kr'
+                password = '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'
+            }
+        }
+    }
+}
+
+
+project(':hjtb_coin_stream_daemon') {
+    dependencies {
+        implementation project(':hjtb_web_client_module')
+        implementation project(':hjtb_exception_monitoring_module')
+    }
+}

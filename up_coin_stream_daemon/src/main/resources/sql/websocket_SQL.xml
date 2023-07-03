@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.devhanjong.hjtb_coin_stream_daemon.mapper.WebSocketMapper">
+
+    <select id="getVaspList" resultType="kr.co.devhanjong.hjtb_coin_stream_daemon.dto.VaspListDto">
+        SELECT *
+        FROM vasp_list
+        WHERE 1=1
+        <if test="health != null and health != ''"> AND health = #{health} </if>
+    </select>
+
+    <select id="selectSymbolFromTrackingList" resultType="kr.co.devhanjong.hjtb_coin_stream_daemon.dto.MarketTrackingDto">
+        SELECT seq, vasp_simple_name, mod_date, reg_date, vasp_symbol, my_symbol, `status`, '' as thread_key, false as newWebSocket
+        FROM market_tracking_list
+        WHERE my_symbol
+            IN (
+                  SELECT my_symbol
+                  FROM market_tracking_list
+                  WHERE `status` = 'Y'
+                  GROUP BY my_symbol
+                  HAVING COUNT(my_symbol) >= 2
+              )
+          AND `status` = 'Y'
+          AND error_cnt <![CDATA[<]]> 5;
+    </select>
+
+    <select id="selectVaspWebSocketEndPoint" resultType="kr.co.devhanjong.hjtb_coin_stream_daemon.dto.VaspWebSocketEndPointDto">
+        SELECT *
+        FROM vasp_websocket_api_end_point;
+    </select>
+
+    <insert id="updateLiveWebSocket">
+        UPDATE live_stream_websocket_list
+        SET mod_date = NOW()
+        WHERE thread_key = #{liveStreamWebSocketDto.threadKey};
+    </insert>
+
+    <insert id="insertLiveWebSocket">
+        INSERT INTO live_stream_websocket_list
+        (
+            thread_key,
+            thread_ip,
+            vasp_simple_name,
+            my_symbol,
+            reg_date,
+            status
+        )
+        VALUES
+            (
+                #{liveStreamWebSocketDto.threadKey},
+                #{liveStreamWebSocketDto.threadIp},
+                #{liveStreamWebSocketDto.vaspSimpleName},
+                #{liveStreamWebSocketDto.mySymbol},
+                NOW(),
+                #{liveStreamWebSocketDto.status}
+            )
+    </insert>
+
+    <delete id="deleteLiveWebSocket">
+        DELETE FROM live_stream_websocket_list
+        WHERE thread_key = #{liveStreamWebSocketDto.threadKey};
+    </delete>
+
+    <delete id="deleteAllLiveWebSocket">
+        DELETE FROM live_stream_websocket_list
+        WHERE thread_ip = #{liveStreamWebSocketDto.threadIp};
+    </delete>
+
+    <select id="selectLiveWebSocket" resultType="kr.co.devhanjong.hjtb_coin_stream_daemon.dto.LiveStreamWebSocketDto">
+        SELECT *
+        FROM live_stream_websocket_list
+        WHERE vasp_simple_name = #{vaspSimpleName}
+        AND my_symbol = #{mySymbol}
+    </select>
+
+    <select id="selectLiveWebSocketByVaspSimpleName" resultType="kr.co.devhanjong.hjtb_coin_stream_daemon.dto.LiveStreamWebSocketDto">
+        SELECT *
+        FROM live_stream_websocket_list
+        WHERE vasp_simple_name = #{vaspSimpleName}
+        LIMIT 1;
+    </select>
+
+    <select id="selectMarketTrackingList" resultType="kr.co.devhanjong.hjtb_coin_stream_daemon.dto.MarketTrackingDto">
+        SELECT seq, vasp_simple_name, mod_date, reg_date, vasp_symbol, my_symbol, `status`, '' as thread_key, false as newWebSocket
+        FROM market_tracking_list
+        WHERE vasp_simple_name = #{vaspSimpleName}
+          AND my_symbol = #{mySymbol}
+          AND status = 'Y'
+          AND error_cnt <![CDATA[<]]> 5;
+    </select>
+
+    <insert id="insertWebSocketHistory">
+        INSERT INTO stream_websocket_history
+        (
+            vasp_simple_name,
+            my_symbol,
+            reason,
+            reg_date
+        )
+        VALUES
+            (
+                #{webSocketHistoryDto.vaspSimpleName},
+                #{webSocketHistoryDto.mySymbol},
+                #{webSocketHistoryDto.reason},
+                NOW()
+            )
+    </insert>
+</mapper>

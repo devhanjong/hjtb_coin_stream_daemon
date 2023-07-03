@@ -1,0 +1,8 @@
+[submodule "up_web_client_module"]
+	path = up_web_client_module
+	url = https://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@github.com/UPRepo/up_web_client_module.git
+	branch = master
+[submodule "up_exception_monitoring_module"]
+	path = up_exception_monitoring_module
+	url = https://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@github.com/UPRepo/up_exception_monitoring_module.git
+	branch = master

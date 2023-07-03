@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.devhanjong.temp_web.TempWebMapper">
+
+    <select id="selectLiveHogaList" resultType="kr.co.devhanjong.temp_web.LiveHogaDto">
+        select *
+        from report_test.live_hoga
+        ORDER BY buy_gap desc;
+    </select>
+
+    <select id="selectFakeOrderList" resultType="kr.co.devhanjong.temp_web.FakeOrderDto">
+        select *
+        from report_test.fake_order
+        ORDER BY start_gap desc;
+    </select>
+</mapper>

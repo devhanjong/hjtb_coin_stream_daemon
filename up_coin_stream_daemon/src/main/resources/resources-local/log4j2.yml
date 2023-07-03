@@ -1,0 +1,66 @@
+Configutation:
+  name: Default
+  status: warn
+
+  Properties:
+    Property:
+      name: log-path
+      value: "logs"
+
+  Appenders:
+    Console:
+      name: Console_Appender
+      target: SYSTEM_OUT
+      PatternLayout:
+        pattern: "%d{${LOG_DATEFORMAT_PATTERN:-yyyy-MM-dd HH:mm:ss.SSS}} %highlight{${LOG_LEVEL_PATTERN:-%5p}}{FATAL=red blink, ERROR=red, WARN=yellow bold, INFO=green, DEBUG=green bold, TRACE=blue} %style{${sys:PID}}{magenta} [%15.15t] %style{%-40.40C{1.}}{cyan} : %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"
+        disableAnsi: "false"
+  Loggers:
+    Root:
+      level: INFO
+      AppenderRef:
+        - ref: Console_Appender
+    Logger:
+      - name: org.hibernate.type
+        additivity: true
+        level: TRACE
+        AppenderRef:
+          - ref: Console_Appender
+      - name: org.hibernate.stat
+        additivity: true
+        level: INFO
+        AppenderRef:
+          - ref: Console_Appender
+      - name: org.hibernate.SQL
+        additivity: true
+        level: INFO
+        AppenderRef:
+          - ref: Console_Appender
+      - name: org.hibernate.tool.hbm2ddl
+        additivity: true
+        level: INFO
+        AppenderRef:
+          - ref: Console_Appender
+      - name: org.hibernate.type.BasicTypeRegistry
+        additivity: true
+        level: WARN
+        AppenderRef:
+          - ref: Console_Appender
+      - name: com.zaxxer.hikari.HikariConfig
+        additivity: true
+        level: INFO
+        AppenderRef:
+          - ref: Console_Appender
+      - name: com.zaxxer.hikari
+        additivity: true
+        level: INFO
+        AppenderRef:
+          - ref: Console_Appender
+
+#  특정 패키지만 지정하고 싶을때 name에 클래스 표기 ex) kr.co.upchain.admin.ddd
+#    Logger:
+#      - name: edu.project
+#        additivity: false
+#        level: debug
+#        AppenderRef:
+#          - ref: Console_Appender
+

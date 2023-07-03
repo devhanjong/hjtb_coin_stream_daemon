@@ -1,0 +1,57 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.0.5'
+    id 'io.spring.dependency-management' version '1.1.0'
+}
+
+group = 'kr.co.upchain'
+version = '1.0.0'
+sourceCompatibility = '17'
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.kafka:spring-kafka'
+    annotationProcessor 'org.projectlombok:lombok'
+    compileOnly 'org.projectlombok:lombok'
+    implementation 'jakarta.validation:jakarta.validation-api:3.0.2'
+
+    // mybatis
+    implementation 'mysql:mysql-connector-java:8.0.28'
+    implementation 'org.springframework.boot:spring-boot-starter-jdbc:3.0.5'
+    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.1'
+    implementation 'org.springframework:spring-tx:6.0.6'
+    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-autoconfigure:3.0.1'
+
+    // exception handler util
+    implementation 'org.apache.commons:commons-lang3:3.10'
+
+    // spring websocket
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
+    // redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'redis.clients:jedis:3.3.0'
+
+
+
+
+
+
+    implementation 'org.springframework.boot:spring-boot-starter'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+ext.profile = (!project.hasProperty('profile') || !profile) ? 'local' : profile
+
+sourceSets{
+    main{
+        resources {
+            srcDirs "src/main/resources/resources-${profile}"
+            exclude "resources-*"
+        }
+    }
+}

@@ -1,0 +1,4 @@
+rootProject.name = 'hjtb_coin_daemon'
+include 'hjtb_coin_stream_daemon'
+include 'hjtb_web_client_module'
+include 'hjtb_exception_monitoring_module'
